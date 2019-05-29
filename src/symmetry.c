@@ -124,6 +124,9 @@ static void set_axes(int axes[3][3],
 static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
                                           const double symprec,
                                           const double angle_symprec);
+static PointSymmetry get_lattice_symmetry_robust(SPGCONST double cell_lattice[3][3],
+                                                 const double symprec,
+                                                 const double angle_symprec);
 static int is_identity_metric(SPGCONST double metric_rotated[3][3],
                               SPGCONST double metric_orig[3][3],
                               const double symprec,
@@ -725,12 +728,19 @@ get_space_group_operations(SPGCONST PointSymmetry *lattice_sym,
 }
 
 /* lattice_sym.size = 0 is returned if failed. */
+static PointSymmetry get_lattice_symmetry_robust(SPGCONST double cell_lattice[3][3],
+                                                 const double symprec,
+                                                 const double angle_symprec)
+{
+}
+
+/* lattice_sym.size = 0 is returned if failed. */
 static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
                                           const double symprec,
                                           const double angle_symprec)
 {
-  int i, j, k, attempt, num_sym;
-  double angle_tol;
+  int i, j, k, attempt, num_sym, max_int;
+  double angle_tol, det_metric, max_Gii, G_comp;
   int axes[3][3];
   double lattice[3][3], min_lattice[3][3];
   double metric[3][3], metric_orig[3][3];
@@ -746,6 +756,21 @@ static PointSymmetry get_lattice_symmetry(SPGCONST double cell_lattice[3][3],
 
   mat_get_metric(metric_orig, min_lattice);
   angle_tol = angle_symprec;
+
+  max_Gii = metric_orig[0][0];
+  if (max_Gii < metric_orig[1][1]) {
+    max_Gii = metric_orig[1][1];
+  }
+  if (max_Gii < metric_orig[2][2]) {
+    max_Gii = metric_orig[2][2];
+  }
+  det_metric = mat_get_determinant_d3(metric_orig);
+  for (i = 0; i < 3; i++) {
+    j = (i + 1) % 3;
+    G_comp = mat_Dabs(metric_orig[i][i] * metric_orig[j][j]
+                      - metric_orig[i][j] * metric_orig[j][i]);
+    max_int = (int)(sqrt(G_comp / det_metric * max_Gii) + 1);
+  }
 
   for (attempt = 0; attempt < NUM_ATTEMPT; attempt++) {
     num_sym = 0;
