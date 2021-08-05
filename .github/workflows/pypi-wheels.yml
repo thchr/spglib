@@ -59,9 +59,10 @@ jobs:
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
 
-      - name: Remove non-manylinux wheels
+      - name: copy manylinux wheels
         run: |
-          rm `ls python/dist/*whl|grep -v manylinux`
+          mkdir dist
+          cp ./python/dist/*manylinux*whl dist
 
       - name: Publish package to TestPyPI
         if: startsWith(github.ref, 'refs/heads/rc')
@@ -70,4 +71,4 @@ jobs:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
-          packages_dir: ./python/dist
+          packages_dir: ./dist
