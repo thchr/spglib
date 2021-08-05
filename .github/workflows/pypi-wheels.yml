@@ -58,6 +58,11 @@ jobs:
           python-versions: "cp36-cp36m cp37-cp37m cp38-cp38 cp39-cp39"
           pre-build-command: 'sh pre-build-script.sh'
           package-path: ./python
+
+      - name: Remove non-manylinux wheels
+        run: |
+          rm `ls *whl|grep -v manylinux`
+
       - name: Publish package to TestPyPI
         if: startsWith(github.ref, 'refs/heads/rc')
         uses: pypa/gh-action-pypi-publish@release/v1
