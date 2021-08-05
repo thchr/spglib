@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set up QEMU
-      if: ${{ matrix.platform == 'manylinux2014_aarch64' }}
+      if: matrix.platform == 'manylinux2014_aarch64'
       uses: docker/setup-qemu-action@v1
 
     - name: Set up Python
@@ -27,28 +27,28 @@ jobs:
         python-version: 3.6
 
     - name: Build manylinux Python wheels manylinux1_x86_64
-      if: ${{ matrix.platform == 'manylinux1_x86_64' }} && startsWith(github.ref, 'refs/heads/rctest')
+      if: matrix.platform == 'manylinux1_x86_64' && startsWith(github.ref, 'refs/heads/rctest')
       uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux1_x86_64
       with:
         python-versions: 'cp37-cp37m cp38-cp38 cp39-cp39'
         pre-build-command: cp -a ../src .
         package-path: ./python
     - name: Build manylinux Python wheels manylinux1_i686
-      if: ${{ matrix.platform == 'manylinux1_i686' }} && startsWith(github.ref, 'refs/heads/rctest')
+      if: matrix.platform == 'manylinux1_i686' && startsWith(github.ref, 'refs/heads/rctest')
       uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux1_i686
       with:
         python-versions: 'cp37-cp37m cp38-cp38 cp39-cp39'
         pre-build-command: cp -a ../src .
         package-path: ./python
     - name: Build manylinux Python wheels manylinux2014_x86_64
-      if: ${{ matrix.platform == 'manylinux2014_x86_64' }} && startsWith(github.ref, 'refs/heads/rctest')
+      if: matrix.platform == 'manylinux2014_x86_64' && startsWith(github.ref, 'refs/heads/rctest')
       uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux2014_x86_64
       with:
         python-versions: 'cp37-cp37m cp38-cp38 cp39-cp39'
         pre-build-command: cp -a ../src .
         package-path: ./python
     - name: Build manylinux Python wheels manylinux2014_aarch64
-      if: ${{ matrix.platform == 'manylinux2014_aarch64' }} && startsWith(github.ref, 'refs/heads/rctest')
+      if: matrix.platform == 'manylinux2014_aarch64' && startsWith(github.ref, 'refs/heads/rctest')
       uses: RalfG/python-wheels-manylinux-build@v0.3.4-manylinux2014_aarch64
       with:
         python-versions: 'cp37-cp37m cp38-cp38 cp39-cp39'
