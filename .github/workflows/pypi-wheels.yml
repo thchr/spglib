@@ -61,7 +61,7 @@ jobs:
 
       - name: Remove non-manylinux wheels
         run: |
-          rm `ls *whl|grep -v manylinux`
+          rm `ls python/dist/*whl|grep -v manylinux`
 
       - name: Publish package to TestPyPI
         if: startsWith(github.ref, 'refs/heads/rc')
